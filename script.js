@@ -4,42 +4,12 @@ document.addEventListener('DOMContentLoaded', function() {
     initNavigation();
     initScrollAnimations();
     initContactForm();
-    initScrollToTop();
 });
 
 // Navigation Functions
 function initNavigation() {
-    const hamburger = document.getElementById('hamburger');
-    const navMenu = document.getElementById('nav-menu');
     const navLinks = document.querySelectorAll('.nav-link');
     const navbar = document.getElementById('navbar');
-
-    // Mobile menu toggle
-    hamburger.addEventListener('click', function() {
-        hamburger.classList.toggle('active');
-        navMenu.classList.toggle('active');
-        
-        // Prevent body scroll when menu is open
-        document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
-    });
-
-    // Close mobile menu when clicking on a nav link
-    navLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            hamburger.classList.remove('active');
-            navMenu.classList.remove('active');
-            document.body.style.overflow = '';
-        });
-    });
-
-    // Close mobile menu when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!navMenu.contains(e.target) && !hamburger.contains(e.target)) {
-            hamburger.classList.remove('active');
-            navMenu.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-    });
 
     // Smooth scrolling for navigation links
     navLinks.forEach(link => {
@@ -109,10 +79,9 @@ function initScrollAnimations() {
         });
     }, observerOptions);
 
-    // Add fade-in class to elements that should animate
+    // Add animation observer to elements
     const animateElements = document.querySelectorAll('.portfolio-item, .about-text, .contact-info, .contact-form');
     animateElements.forEach(el => {
-        el.classList.add('fade-in');
         observer.observe(el);
     });
 }
@@ -307,136 +276,4 @@ function showSuccessMessage() {
     setTimeout(() => {
         successDiv.remove();
     }, 5000);
-}
-
-// Scroll to Top Function
-function initScrollToTop() {
-    // Create scroll to top button
-    const scrollButton = document.createElement('button');
-    scrollButton.className = 'scroll-to-top';
-    scrollButton.innerHTML = '<i class="fas fa-arrow-up"></i>';
-    scrollButton.style.cssText = `
-        position: fixed;
-        bottom: 2rem;
-        right: 2rem;
-        width: 50px;
-        height: 50px;
-        background: #2563eb;
-        color: white;
-        border: none;
-        border-radius: 50%;
-        cursor: pointer;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease;
-        z-index: 1000;
-        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
-    `;
-    
-    document.body.appendChild(scrollButton);
-    
-    // Show/hide scroll button based on scroll position
-    window.addEventListener('scroll', function() {
-        if (window.scrollY > 500) {
-            scrollButton.style.opacity = '1';
-            scrollButton.style.visibility = 'visible';
-        } else {
-            scrollButton.style.opacity = '0';
-            scrollButton.style.visibility = 'hidden';
-        }
-    });
-    
-    // Scroll to top functionality
-    scrollButton.addEventListener('click', function() {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    });
-    
-    // Hover effect
-    scrollButton.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-3px) scale(1.1)';
-        this.style.boxShadow = '0 6px 20px rgba(37, 99, 235, 0.4)';
-    });
-    
-    scrollButton.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0) scale(1)';
-        this.style.boxShadow = '0 4px 15px rgba(37, 99, 235, 0.3)';
-    });
-}
-
-// Utility Functions
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-// Add debounced scroll listener for performance
-window.addEventListener('scroll', debounce(function() {
-    updateActiveNavLink();
-}, 10));
-
-// Typing animation for hero section (optional enhancement)
-function initTypingAnimation() {
-    const subtitle = document.querySelector('.hero-subtitle');
-    const texts = ['Full Stack Developer', 'UI/UX Designer', 'Problem Solver', 'Creative Thinker'];
-    let textIndex = 0;
-    let charIndex = 0;
-    let isDeleting = false;
-    
-    function typeText() {
-        const currentText = texts[textIndex];
-        
-        if (isDeleting) {
-            subtitle.textContent = currentText.substring(0, charIndex - 1);
-            charIndex--;
-        } else {
-            subtitle.textContent = currentText.substring(0, charIndex + 1);
-            charIndex++;
-        }
-        
-        let typeSpeed = isDeleting ? 50 : 100;
-        
-        if (!isDeleting && charIndex === currentText.length) {
-            typeSpeed = 2000; // Pause at end
-            isDeleting = true;
-        } else if (isDeleting && charIndex === 0) {
-            isDeleting = false;
-            textIndex = (textIndex + 1) % texts.length;
-            typeSpeed = 500; // Pause before starting new text
-        }
-        
-        setTimeout(typeText, typeSpeed);
-    }
-    
-    // Uncomment the line below to enable typing animation
-    // typeText();
-}
-
-// Initialize typing animation (commented out by default)
-// document.addEventListener('DOMContentLoaded', initTypingAnimation);
-
-// Performance optimization: Lazy loading for images
-function initLazyLoading() {
-    const images = document.querySelectorAll('img[data-src]');
-    const imageObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                img.src = img.dataset.src;
-                img.classList.remove('lazy');
-                imageObserver.unobserve(img);
-            }
-        });
-    });
-    
-    images.forEach(img => imageObserver.observe(img));
 }
